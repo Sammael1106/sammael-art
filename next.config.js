@@ -6,8 +6,7 @@ const nextConfig = {
   sassOptions: {
     fiber: false,
     includePaths: [path.join(__dirname, 'styles')],
-  },
-  staticPageGenerationTimeout: 1000
+  }
 }
 
 module.exports = nextConfig
