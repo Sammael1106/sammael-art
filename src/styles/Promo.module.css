@@ -1,0 +1,16 @@
+.container {
+  border: 1px solid red;
+  display: flex;
+}
+
+.container textarea {
+  width: 100%;
+}
+.canvas {
+  background-position: center;
+  background-size: cover;
+}
+.canvas canvas {
+  width: 500px;
+  height: 500px;
+}
