@@ -8,7 +8,11 @@ import { Center, AccumulativeShadows, RandomizedLight, OrbitControls, useGLTF, E
 import { Bloom, EffectComposer, Vignette } from '@react-three/postprocessing'
 import { GlitchMode, BlendFunction } from 'postprocessing'
 
+import { Drunk } from '../vfx/custom_effects'
+
 export default function App() {
+  const customEffect = useRef()
+
   return (
     <Canvas shadows camera={{ position: [8, 1.5, 8], fov: 25 }}>
       <color args={['pink']} attach="background" />
@@ -34,12 +38,15 @@ export default function App() {
       </group>
       <OrbitControls minPolarAngle={0} maxPolarAngle={Math.PI / 2} />
       <Environment resolution={32} files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/drackenstein_quarry_1k.hdr"/>
+
+
       <EffectComposer disableNormalPass>
-        <Vignette
+        <Drunk frequency={10} amplitude={0.1} blendFunction={ BlendFunction.DARKEN } ref={customEffect}/>
+        {/* <Vignette
             offset={ 0.2 }
             darkness={ 0.9 }
             blendFunction={ BlendFunction.DARKEN }
-        />
+        /> */}
         <Bloom mipmapBlur levels={9} intensity={1.5} luminanceThreshold={1} luminanceSmoothing={1} />
       </EffectComposer>
     </Canvas>
