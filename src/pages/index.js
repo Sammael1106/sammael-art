@@ -3,12 +3,13 @@
 import * as THREE from 'three'
 import { useRef, useCallback, useState } from 'react'
 import { useLayoutEffect } from 'react'
-import { Canvas } from '@react-three/fiber'
+import { Canvas, useFrame, extend } from '@react-three/fiber'
 import { Center, AccumulativeShadows, RandomizedLight, OrbitControls, useGLTF, Environment } from '@react-three/drei'
 import { Bloom, EffectComposer, Vignette } from '@react-three/postprocessing'
 import { GlitchMode, BlendFunction } from 'postprocessing'
 
-import { Drunk } from '../vfx/custom_effects'
+import { Drunk, Pencil } from '../vfx/custom_effects'
+import { PortalMaterial } from '../shaders/portal'
 
 export default function App() {
   const customEffect = useRef()
@@ -41,7 +42,8 @@ export default function App() {
 
 
       <EffectComposer disableNormalPass>
-        <Drunk frequency={10} amplitude={0.1} blendFunction={ BlendFunction.DARKEN } ref={customEffect}/>
+        <Pencil />
+        <Drunk frequency={2} amplitude={0.3} />
         {/* <Vignette
             offset={ 0.2 }
             darkness={ 0.9 }
@@ -54,13 +56,20 @@ export default function App() {
 }
 
 
+extend({ PortalMaterial })
+
 function Suzi(props) {
-  const { scene, materials } = useGLTF('https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/suzanne-high-poly/model.gltf')
-  useLayoutEffect(() => {
-    scene.traverse((obj) => obj.isMesh && (obj.receiveShadow = obj.castShadow = true))
-    materials.default.color.set('orange')
-    materials.default.roughness = 0
-    materials.default.normalScale.set(0.1, 0.1)
+  const { scene, materials, nodes } = useGLTF('https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/suzanne-high-poly/model.gltf')
+  const portalMaterialRef = useRef()
+  useFrame((state, delta) => {
+    portalMaterialRef.current.uTime += delta
   })
-  return <primitive object={scene} {...props} />
+
+  return (
+    <mesh geometry={ nodes.Suzanne.geometry }
+          position={ nodes.Suzanne.position }
+          rotation={ nodes.Suzanne.rotation }>
+      <portalMaterial key={PortalMaterial.key} ref={portalMaterialRef} />
+    </mesh>
+  )
 }
